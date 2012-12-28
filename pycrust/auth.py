@@ -49,6 +49,7 @@ def all_of(*conditions):
 
 ## auth conditions
 def auth_valid_user():
+    """True if there is a user logged in"""
     def check():
         if cherrypy.request.login:
             return True
@@ -56,5 +57,6 @@ def auth_valid_user():
     return check
 
 def auth_user(id):
+    """True if the userid matches"""
     return lambda: cherrypy.request.login == id
 

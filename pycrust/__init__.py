@@ -44,7 +44,11 @@ def dump_response(*args, **kwargs):
     if not cherrypy.response.status:
         return
 
-    status = int(cherrypy.response.status.split(' ', 1)[0])
+    status = 200
+    if isinstance(cherrypy.response.status, int):
+        status = cherrypy.response.status
+    elif isinstance(cherrypy.response.status, str):
+        status = int(cherrypy.response.status.split(' ', 1)[0])
 
     with open('/tmp/response.%d.txt' % status, 'w') as f:
 
@@ -58,14 +62,4 @@ def dump_response(*args, **kwargs):
 
 cherrypy.tools.debug_request  = cherrypy.Tool('on_end_resource', dump_request)
 cherrypy.tools.debug_response = cherrypy.Tool('on_end_resource', dump_response)
-
-
-#def jsonmako(filename=None):
-#    def decorate(func):
-#        def wrapper(*args, **kwargs):
-#            foo
-#            return func(*args, **kwargs)
-#        return wrapper
-#    return decorate
-
 
