@@ -28,12 +28,23 @@ def dump_request(*args, **kwargs):
 
         f.write(cherrypy.request.request_line)
 
+        # write headers
         for (k,v) in cherrypy.request.headers.items():
             f.write('%s: %s\n' % (k,v))
 
-        if cherrypy.request.body:
+        f.write("\n")
+
+        # dump out the POST data when submitted
+        if ('Content-Type' in cherrypy.request.headers and
+                'application/x-www-form-urlencoded' in cherrypy.request.headers['Content-Type']):
+            for (k,v) in cherrypy.request.params.items():
+                f.write('%s: %s\n' % (k,v))
+
+        # otherwise, dump the body
+        elif cherrypy.request.body:
             with cherrypy.request.body.make_file() as fin:
                 f.write(fin.read())
+
 
 
 def dump_response(*args, **kwargs):
