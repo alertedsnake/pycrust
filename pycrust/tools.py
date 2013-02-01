@@ -27,7 +27,7 @@ class MakoHandler(cherrypy.dispatch.LateParamPageHandler):
             'url':      url,
         })
 
-        return self.template.render(**env)
+        return self.template.render_unicode(**env)
 
 
 class MakoLoader(object):
@@ -49,6 +49,7 @@ class MakoLoader(object):
             lookup = TemplateLookup(directories=directories,
                                     module_directory=module_directory,
                                     collection_size=collection_size,
+                                    input_encoding='utf-8',
                                     output_encoding='utf-8',
                                     encoding_errors='replace'
                                     )
