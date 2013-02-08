@@ -17,8 +17,14 @@ def check_auth(*args, **kwargs):
                 if not c():
                     raise cherrypy.HTTPError(403)
 
-        # redirect to the login page, preserving the 'return' URL
         else:
+            # throw a 401 rather than redirect if this is a JSON-wanting request
+            if ('HTTP_ACCEPT' in cherrypy.request.headers and
+                'application/json' in cherrypy.request.headers['HTTP_ACCEPT']):
+                raise cherrypy.HTTPError(401)
+
+            # otherwise, for a normal request,
+            # redirect to the login page, preserving the 'return' URL
             target = url('login')
             referer = cherrypy.request.request_line.split()[1]
             if referer:
@@ -46,6 +52,7 @@ def all_of(*conditions):
                 return False
         return True
     return check
+
 
 ## auth conditions
 def auth_valid_user():
