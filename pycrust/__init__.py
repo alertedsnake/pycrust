@@ -6,12 +6,20 @@ A collection of CherryPy extensions
 __author__ = 'Michael Stella <michael@thismetalsky.org>'
 __version__ = '1.0.0'
 
+import inspect, os
 import routes
 import cherrypy
 
 class BaseHandler(object):
     """Base class for web handler objects"""
     _cp_config = {}
+
+    def log(self, msg):
+        """Logs to the Cherrypy error log but in a much more pretty way,
+        with the handler name and line number
+        """
+        c = inspect.getouterframes(inspect.currentframe())[1]
+        cherrypy.log.error(msg, context='HANDLER ({0}:{1})'.format(os.path.basename(c[1]), c[2]))
 
 
 def url(*args, **kwargs):
