@@ -3,7 +3,7 @@
 A collection of CherryPy extensions
 """
 
-__author__ = 'Michael Stella <michael@thismetalsky.org>'
+__author__ = 'Michael Stella <pycrust@thismetalsky.org>'
 __version__ = '1.0.0'
 
 import inspect, os
@@ -24,6 +24,7 @@ class BaseHandler(object):
 
 def url(*args, **kwargs):
     """Find the given URL using routes"""
+
     if 'absolute' in kwargs and kwargs['absolute']:
         return cherrypy.url(routes.url_for(*args, **kwargs))
 
@@ -32,6 +33,7 @@ def url(*args, **kwargs):
 
 def dump_request(*args, **kwargs):
     """Dumps the request out to a file in /tmp, for debugging"""
+
     with open('/tmp/request.%s.txt' % cherrypy.request.method, 'w') as f:
 
         f.write(cherrypy.request.request_line)

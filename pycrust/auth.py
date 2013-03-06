@@ -1,5 +1,7 @@
 """User authentication and authorization for CherryPy"""
 
+__author__ = 'Michael Stella <pycrust@thismetalsky.org>'
+
 import cherrypy
 import urllib
 

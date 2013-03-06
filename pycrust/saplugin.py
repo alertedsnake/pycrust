@@ -1,4 +1,10 @@
 # -*- coding: utf-8 -*-
+#
+# This file is taken from Sylvain Hellegouarch's post:
+# http://www.defuze.org/archives/222-integrating-sqlalchemy-into-a-cherrypy-application.html
+#
+# All credit goes to Sylvain for this.
+#
 import cherrypy
 from cherrypy.process import wspbus, plugins
 from sqlalchemy import create_engine

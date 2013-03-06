@@ -1,9 +1,9 @@
 #!/usr/bin/env python
-
-try:
-    from distutils.command.build_py import build_py_2to3 as build_py
-except ImportError:
+import sys
+if sys.version < '3':
     from distutils.command.build_py import build_py
+else:
+    from distutils.command.build_py import build_py_2to3 as build_py
 
 from distutils.core import setup
 

@@ -1,5 +1,9 @@
+"""Extra tools not included with Cherrypy"""
+__author__ = 'Michael Stella <pycrust@thismetalsky.org>'
 
 import datetime
+import sys
+
 import cherrypy
 from mako.lookup import TemplateLookup
 try:
@@ -31,6 +35,7 @@ class MakoHandler(cherrypy.dispatch.LateParamPageHandler):
 
 
 class MakoLoader(object):
+    """Template loader for Mako"""
 
     def __init__(self, directories=[]):
         self.lookups = {}
@@ -66,7 +71,15 @@ class MakoLoader(object):
 def json_handler(*args, **kwargs):
     """Custom JSON handler which uses the custom encoder"""
     value = cherrypy.serving.request._json_inner_handler(*args, **kwargs)
-    return str(json.dumps(value, sort_keys=True, indent=4, cls=JSONCustomEncoder))
+
+    out = json.dumps(value, sort_keys=True, indent=4, cls=JSONCustomEncoder)
+
+    # Cherrypy wants us to return bytes, so in Python 3 we have to
+    # encode the JSON output properly
+    if sys.version < '3':
+        return out
+    else:
+        return bytes(out , 'utf-8')
 
 
 class JSONCustomEncoder(json.JSONEncoder):
