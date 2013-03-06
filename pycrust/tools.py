@@ -66,7 +66,7 @@ class MakoLoader(object):
 def json_handler(*args, **kwargs):
     """Custom JSON handler which uses the custom encoder"""
     value = cherrypy.serving.request._json_inner_handler(*args, **kwargs)
-    return json.dumps(value, sort_keys=True, indent=4, cls=JSONCustomEncoder)
+    return str(json.dumps(value, sort_keys=True, indent=4, cls=JSONCustomEncoder))
 
 
 class JSONCustomEncoder(json.JSONEncoder):

@@ -51,7 +51,7 @@ def dump_request(*args, **kwargs):
         # otherwise, dump the body
         elif cherrypy.request.body:
             with cherrypy.request.body.make_file() as fin:
-                f.write(fin.read())
+                f.write(str(fin.read()))
 
 
 
@@ -77,7 +77,7 @@ def dump_response(*args, **kwargs):
         f.write("Status: %d\n\n" % status)
 
         if cherrypy.response.body:
-            f.write(cherrypy.response.collapse_body())
+            f.write(str(cherrypy.response.collapse_body()))
 
 cherrypy.tools.debug_request  = cherrypy.Tool('on_end_resource', dump_request)
 cherrypy.tools.debug_response = cherrypy.Tool('on_end_resource', dump_response)
