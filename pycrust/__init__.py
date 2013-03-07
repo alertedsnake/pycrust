@@ -17,7 +17,6 @@ __author__ = 'Michael Stella <pycrust@thismetalsky.org>'
 __version__ = '1.0.0'
 
 import inspect, os
-import routes
 import cherrypy
 
 class BaseHandler(object):
@@ -33,7 +32,11 @@ class BaseHandler(object):
 
 
 def url(*args, **kwargs):
-    """Find the given URL using routes.  Assuming you're using routes."""
+    """Find the given URL using routes.  Throws an exception
+    if you're not using routes.
+    """
+
+    import routes
 
     if 'absolute' in kwargs and kwargs['absolute']:
         return cherrypy.url(routes.url_for(*args, **kwargs))
