@@ -16,6 +16,6 @@ setup(
     author_email    = "pycrust@thismetalsky.org",
     license         = "BSD",
     packages        = ['pycrust'],
-    install_requires= ['mako', 'routes'],
+    requires        = ['mako', 'routes'],
 )
 
