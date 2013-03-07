@@ -1,4 +1,36 @@
-"""Extra tools not included with Cherrypy"""
+"""
+Extra tools/enhancements not included with Cherrypy
+
+Mako Templates
+--------------
+
+Mako templating code was based on the code and discussion at
+http://tools.cherrypy.org/wiki/Mako
+
+To use the Mako renderer:
+  cherrypy.tools.mako = cherrypy.Tool('on_start_resource',
+                                      MakoLoader(directories=['/path/to/templates']))
+
+Then in your handler:
+
+    @cherrypy.tools.mako(filename='index.html')
+    def index(self):
+        return {}
+
+
+JSON Output
+-----------
+
+The JSON output handler here allows you to convert arbitrary obects
+into JSON format, and send them out as a application/json response.
+
+This method uses a custom encoder, and calls obj.__to_json__() or
+obj.__to_dict__() on any object which has this method.  This method
+should return the data in the object as a dict.
+
+
+"""
+
 __author__ = 'Michael Stella <pycrust@thismetalsky.org>'
 
 import datetime
@@ -90,6 +122,7 @@ class JSONCustomEncoder(json.JSONEncoder):
         if hasattr(obj, '__to_dict__'):
             return obj.__to_dict__()
 
+        # we convert dates into unixtime, it's reasonably portable
         if isinstance(obj, (datetime.date, datetime.datetime)):
             return obj.strftime('%s')
 

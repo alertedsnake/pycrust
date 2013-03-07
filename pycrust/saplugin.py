@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
+"""
+saplugin is a CherryPy plugin for SQLAlchemy.  See the
+documentation in pycrust.satool for instructions.
+
+"""
 #
-# This file is taken from Sylvain Hellegouarch's post:
+# This file is based on Sylvain Hellegouarch's post:
 # http://www.defuze.org/archives/222-integrating-sqlalchemy-into-a-cherrypy-application.html
 #
 # All credit goes to Sylvain for this.

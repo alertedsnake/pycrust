@@ -1,6 +1,16 @@
-"""Pycrust
+"""
+Pycrust
 
 A collection of CherryPy extensions
+
+See also the following submodules:
+
+    pycrust.auth
+    pycrust.saplugin
+    pycrust.satool
+    pycrust.tools
+
+
 """
 
 __author__ = 'Michael Stella <pycrust@thismetalsky.org>'
@@ -11,7 +21,7 @@ import routes
 import cherrypy
 
 class BaseHandler(object):
-    """Base class for web handler objects"""
+    """A Base class for web handler objects."""
     _cp_config = {}
 
     def log(self, msg):
@@ -23,7 +33,7 @@ class BaseHandler(object):
 
 
 def url(*args, **kwargs):
-    """Find the given URL using routes"""
+    """Find the given URL using routes.  Assuming you're using routes."""
 
     if 'absolute' in kwargs and kwargs['absolute']:
         return cherrypy.url(routes.url_for(*args, **kwargs))
@@ -32,7 +42,11 @@ def url(*args, **kwargs):
 
 
 def dump_request(*args, **kwargs):
-    """Dumps the request out to a file in /tmp, for debugging"""
+    """Dumps the request out to a file in /tmp, for debugging
+
+    Enable by setting, in your config file:
+        tools.debug_request.on  = True
+    """
 
     with open('/tmp/request.%s.txt' % cherrypy.request.method, 'w') as f:
 
@@ -58,7 +72,11 @@ def dump_request(*args, **kwargs):
 
 
 def dump_response(*args, **kwargs):
-    """Dumps the response out to a file in /tmp, for debugging"""
+    """Dumps the response out to a file in /tmp, for debugging.
+
+    Enable by setting, in your config file:
+        tools.debug_response.on  = True
+    """
 
     # when a 500 error is displayed, cherrypy handles this
     # differently, and we don't really need to dump it out
@@ -80,6 +98,7 @@ def dump_response(*args, **kwargs):
 
         if cherrypy.response.body:
             f.write(str(cherrypy.response.collapse_body()))
+
 
 cherrypy.tools.debug_request  = cherrypy.Tool('on_end_resource', dump_request)
 cherrypy.tools.debug_response = cherrypy.Tool('on_end_resource', dump_response)

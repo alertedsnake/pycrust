@@ -1,6 +1,35 @@
 # -*- coding: utf-8 -*-
+"""
+SATool is a CherryPy tool for talking to databases via SQLAlchemy.
+
+Set it up thusly:
+
+    # setup database connection
+    from pycrust.saplugin import SAEnginePlugin
+    SAEnginePlugin(cherrypy.engine, "sqlite:///database.db").subscribe()
+    from pycrust.satool import SATool
+    cherrypy.tools.db = SATool()
+
+    ...
+
+    cherrypy.engine.start()
+    cherrypy.engine.block()
+
+
+In your config file, do:
+
+    tools.db.on = True
+
+
+Then in your handler objects you can do:
+
+    from myproject.model.users import User
+
+    users = cherrypy.request.db.query(User).all()
+
+"""
 #
-# This file is taken from Sylvain Hellegouarch's post:
+# This file is based on Sylvain Hellegouarch's post:
 # http://www.defuze.org/archives/222-integrating-sqlalchemy-into-a-cherrypy-application.html
 #
 # All credit goes to Sylvain for this.

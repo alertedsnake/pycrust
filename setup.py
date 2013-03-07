@@ -8,7 +8,6 @@ else:
 from distutils.core import setup
 
 setup(
-#    use_2to3        = True,
     cmdclass        = {'build_py': build_py},
     name            = "pycrust",
     version         = "1.0",
@@ -17,5 +16,6 @@ setup(
     author_email    = "pycrust@thismetalsky.org",
     license         = "BSD",
     packages        = ['pycrust'],
+    install_requires= ['mako', 'routes'],
 )
 

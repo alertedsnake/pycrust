@@ -1,4 +1,11 @@
-"""User authentication and authorization for CherryPy"""
+"""
+User authentication and authorization for CherryPy
+
+This code is based on the examples and discussion at
+http://tools.cherrypy.org/wiki/AuthenticationAndAccessRestrictions
+
+
+"""
 
 __author__ = 'Michael Stella <pycrust@thismetalsky.org>'
 
