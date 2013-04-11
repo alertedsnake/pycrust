@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""ZDB plugin for Cherrypy
+"""ZODB plugin for Cherrypy
 
 At the moment this ONLY supports ZEO.ClientStorage - but you
 most likely should be using that anyway.
@@ -58,6 +58,7 @@ class ZDBPlugin(plugins.SimplePlugin):
         self.zdb = self.connection = self.storage = None
         self.dbsocket = dbsocket
         self.onbind = onbind
+        self.db = None
 
 
     def start(self):
@@ -90,16 +91,25 @@ class ZDBPlugin(plugins.SimplePlugin):
 
 
     def bind(self):
-        db = self.connection.root()
+        self.db = self.connection.root()
 
         if self.onbind:
-            self.onbind(db)
+            self.onbind(self.db)
 
-        return db
+        # wrap it
+        self.db = ZDB(self.db)
+
+        return self.db
 
 
     def commit(self):
-        transaction.commit()
+
+        if self.db:
+            try:
+                self.db.commit()
+            except:
+                self.db.abort()
+                raise
 
 
 class ZDBTool(cherrypy.Tool):
@@ -125,4 +135,32 @@ class ZDBTool(cherrypy.Tool):
         cherrypy.request.db = None
         cherrypy.engine.publish('commit-session')
 
+
+class ZDB(object):
+    """A wrapper class for the databse so we can have commit()
+    and a sane get()
+    """
+    def __init__(self, db):
+        self.db = db
+
+    def commit(self):
+        transaction.commit()
+
+    def abort(self):
+        transaction.abort()
+
+    def get(self, table, key, default=None):
+        if not table in self.db:
+            raise ValueError("No such table '{0}'".format(table))
+
+        if not key in self.db[table]:
+            return default
+
+        return self.db[table][key]
+
+    def __getitem__(self, name):
+        if name in self.db:
+            return self.db[name]
+        else:
+            return None
 
