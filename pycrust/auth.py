@@ -28,9 +28,11 @@ def check_auth(*args, **kwargs):
 
         else:
             # throw a 401 rather than redirect if this is a JSON-wanting request
-            if ('HTTP_ACCEPT' in cherrypy.request.headers and
-                'application/json' in cherrypy.request.headers['HTTP_ACCEPT']):
-                raise cherrypy.HTTPError(401)
+            # not sure why some things set HTTP_ACCEPT and others ACCEPT
+            for h in ('ACCEPT', 'HTTP_ACCEPT'):
+                if (h in cherrypy.request.headers and
+                    'application/json' in cherrypy.request.headers[h]):
+                    raise cherrypy.HTTPError(401)
 
             # otherwise, for a normal request,
             # redirect to the login page, preserving the 'return' URL
