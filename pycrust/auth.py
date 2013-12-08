@@ -64,6 +64,13 @@ def all_of(*conditions):
         return True
     return check
 
+def one_of(*conditions):
+    def check():
+        for c in conditions:
+            if c():
+                return True
+        return False
+    return check
 
 ## auth conditions
 def auth_valid_user():
