@@ -16,7 +16,7 @@ See also the following submodules:
 __author__ = 'Michael Stella <pycrust@thismetalsky.org>'
 __version__ = '1.0.0'
 
-import inspect, os
+import inspect, os, sys
 import cherrypy
 
 class BaseHandler(object):
@@ -100,7 +100,10 @@ def dump_response(*args, **kwargs):
         f.write("Status: %d\n\n" % status)
 
         if cherrypy.response.body:
-            f.write(str(cherrypy.response.collapse_body()))
+            if sys.version < '3':
+                f.write(str(cherrypy.response.collapse_body().decode()))
+            else:
+                f.write(str(cherrypy.response.collapse_body()))
 
 
 cherrypy.tools.debug_request  = cherrypy.Tool('on_end_resource', dump_request)
