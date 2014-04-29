@@ -51,9 +51,10 @@ def dump_request(*args, **kwargs):
         tools.debug_request.on  = True
     """
 
-    with open('/tmp/request.%s.txt' % cherrypy.request.method, 'w') as f:
+    with open('/tmp/request.%s.txt' % cherrypy.request.method, 'w', encoding='utf-8') as f:
 
         f.write(cherrypy.request.request_line)
+        f.write("\n")
 
         # write headers
         for (k,v) in cherrypy.request.headers.items():
@@ -92,7 +93,7 @@ def dump_response(*args, **kwargs):
     elif isinstance(cherrypy.response.status, str):
         status = int(cherrypy.response.status.split(' ', 1)[0])
 
-    with open('/tmp/response.%d.txt' % status, 'w') as f:
+    with open('/tmp/response.%d.txt' % status, 'w', encoding='utf-8') as f:
 
         f.write("HTTP/1.1 %s\n" % cherrypy.response.status)
         for (k,v) in cherrypy.response.headers.items():
