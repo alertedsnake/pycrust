@@ -122,9 +122,10 @@ class JSONCustomEncoder(json.JSONEncoder):
         if hasattr(obj, '__to_dict__'):
             return obj.__to_dict__()
 
-        # we convert dates into unixtime, it's reasonably portable
+        # we convert dates into ISO format, it's reasonably portable
         if isinstance(obj, (datetime.date, datetime.datetime)):
-            return obj.strftime('%s')
+            return obj.isoformat()
+            #return obj.strftime('%s')
 
         return json.JSONEncoder.default(self, obj)
 
