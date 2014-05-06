@@ -16,20 +16,42 @@ See also the following submodules:
 __author__ = 'Michael Stella <pycrust@thismetalsky.org>'
 __version__ = '1.0.0'
 
-import inspect, os, sys
+import inspect, logging, os, sys
 import cherrypy
 
 class BaseHandler(object):
     """A Base class for web handler objects."""
     _cp_config = {}
 
-    def log(self, msg, severity=20):
+    def log(self, msg, severity=logging.INFO, context=None):
         """Logs to the Cherrypy error log but in a much more pretty way,
         with the handler name and line number
         """
-        c = inspect.getouterframes(inspect.currentframe())[1]
+        if not context:
+            context = inspect.getouterframes(inspect.currentframe())[1]
         cherrypy.log.error(msg=msg.strip().replace('\n', '; '), severity=severity,
-                           context='HANDLER ({0}:{1})'.format(os.path.basename(c[1]), c[2]))
+                           context='HANDLER ({}:{}:{})'.format(
+                                self.__class__.__name__, context[3], context[2]))
+
+    def log_debug(self, msg):
+        return self.log(msg, severity=logging.DEBUG,
+                        context=inspect.getouterframes(inspect.currentframe())[1])
+
+    def log_info(self, msg):
+        return self.log(msg, severity=logging.INFO,
+                        context=inspect.getouterframes(inspect.currentframe())[1])
+
+    def log_warn(self, msg):
+        return self.log(msg, severity=logging.WARN,
+                        context=inspect.getouterframes(inspect.currentframe())[1])
+
+    def log_error(self, msg):
+        return self.log(msg, severity=logging.ERROR,
+                        context=inspect.getouterframes(inspect.currentframe())[1])
+
+    def log_fatal(self, msg):
+        return self.log(msg, severity=logging.FATAL,
+                        context=inspect.getouterframes(inspect.currentframe())[1])
 
 
 def url(*args, **kwargs):
