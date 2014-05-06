@@ -28,7 +28,7 @@ class BaseHandler(object):
         with the handler name and line number
         """
         c = inspect.getouterframes(inspect.currentframe())[1]
-        cherrypy.log.error(msg=msg.strip(), severity=severity,
+        cherrypy.log.error(msg=msg.strip().replace('\n', '; '), severity=severity,
                            context='HANDLER ({0}:{1})'.format(os.path.basename(c[1]), c[2]))
 
 
