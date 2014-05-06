@@ -28,7 +28,7 @@ class BaseHandler(object):
         with the handler name and line number
         """
         c = inspect.getouterframes(inspect.currentframe())[1]
-        cherrypy.log.error(msg, context='HANDLER ({0}:{1})'.format(os.path.basename(c[1]), c[2]))
+        cherrypy.log.error(msg.strip(), context='HANDLER ({0}:{1})'.format(os.path.basename(c[1]), c[2]))
 
 
 def url(*args, **kwargs):
