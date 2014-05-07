@@ -15,6 +15,7 @@ from cherrypy.process import plugins
 from sqlalchemy import create_engine
 from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy.orm import scoped_session, sessionmaker
+from pycrust.saquery import AugmentedQuery
 
 __all__ = ['SAEnginePlugin']
 
@@ -32,7 +33,8 @@ class SAEnginePlugin(plugins.SimplePlugin):
         self.sa_engine = None
         self.connection_string = connection_string
         self.session = scoped_session(sessionmaker(autoflush=True,
-                                                   autocommit=False))
+                                                   autocommit=False,
+                                                   query_cls=AugmentedQuery))
 
     def start(self):
         self.bus.log('Starting up DB access')
