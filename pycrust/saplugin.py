@@ -10,9 +10,10 @@ documentation in pycrust.satool for instructions.
 #
 # All credit goes to Sylvain for this.
 #
-import cherrypy
-from cherrypy.process import wspbus, plugins
+import cherrypy, logging
+from cherrypy.process import plugins
 from sqlalchemy import create_engine
+from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 __all__ = ['SAEnginePlugin']
@@ -64,8 +65,14 @@ class SAEnginePlugin(plugins.SimplePlugin):
         In all cases, the current session is unbound and therefore
         not usable any longer.
         """
+
         try:
             self.session.commit()
+        # an attempt was made to commit with nothing to commit
+        except InvalidRequestError as e:
+            self.bus.log("Attempt to commit with nothing to commit!  Message: {}".format(e),
+                         level=logging.INFO)
+            self.session.rollback()
         except:
             self.session.rollback()
             raise
