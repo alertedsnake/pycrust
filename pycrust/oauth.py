@@ -23,10 +23,12 @@ THE SOFTWARE.
 """
 
 import base64
+import hashlib
 import hmac
 import random
-import time
 import six
+import time
+import uuid
 from six.moves import urllib
 
 
@@ -72,6 +74,10 @@ def generate_verifier(length=8):
     """Generate pseudorandom number."""
     return ''.join([str(random.randint(0, 9)) for i in range(length)])
 
+def generate_hash():
+    """Generate a hash, for tokens and secrets"""
+    obj = hashlib.sha1(uuid.uuid1().bytes)
+    return obj.hexdigest()
 
 class OAuthConsumer():
     """Consumer of OAuth authentication.
@@ -91,7 +97,7 @@ class OAuthConsumer():
 class OAuthToken():
     """OAuthToken is a data type that represents an End User via either an access
     or request token.
-    
+
     key -- the token
     secret -- the token secret
 
@@ -137,7 +143,7 @@ class OAuthToken():
         if self.callback_confirmed is not None:
             data['oauth_callback_confirmed'] = self.callback_confirmed
         return urllib.parse.urlencode(data)
- 
+
     def from_string(s):
         """ Returns a token from something like:
         oauth_token_secret=xxx&oauth_token=xxx
@@ -444,7 +450,7 @@ class OAuthServer():
     def get_callback(self, oauth_request):
         """Get the callback URL."""
         return oauth_request.get_parameter('oauth_callback')
- 
+
     def build_authenticate_header(self, realm=''):
         """Optional support for the authenticate header."""
         return {'WWW-Authenticate': 'OAuth realm="%s"' % realm}
@@ -628,7 +634,6 @@ class OAuthSignatureMethod_HMAC_SHA1(OAuthSignatureMethod):
             raw = raw.encode('utf-8')
 
         # HMAC object.
-        import hashlib
         hashed = hmac.new(key, raw, hashlib.sha1)
 
         # Calculate the digest base 64.
