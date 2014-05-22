@@ -125,7 +125,6 @@ class JSONCustomEncoder(json.JSONEncoder):
         # we convert dates into ISO format, it's reasonably portable
         if isinstance(obj, (datetime.date, datetime.datetime)):
             return obj.isoformat()
-            #return obj.strftime('%s')
 
         return json.JSONEncoder.default(self, obj)
 
