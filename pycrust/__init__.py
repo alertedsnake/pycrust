@@ -133,3 +133,24 @@ def dump_response(*args, **kwargs):
 cherrypy.tools.debug_request  = cherrypy.Tool('on_end_resource', dump_request)
 cherrypy.tools.debug_response = cherrypy.Tool('on_end_resource', dump_response)
 
+
+def load_class(fullname):
+    """Loads a class given the full dotted class name"""
+    assert fullname is not None, "fullname must not be None"
+    modulename, classname = fullname.rsplit('.', 1)
+
+    try:
+        module = __import__(modulename, globals(), locals(), [classname])
+    except ImportError as e:
+        cherrypy.log("Error loading module {}".format(modulename), context='ENGINE', severity=loging.ERROR)
+        raise
+
+    try:
+        cls = getattr(module, classname)
+    except AttributeError as e:
+        cherrypy.log("Error loading class {} from module {}".format(classname, modulename),
+                      context='ENGINE', severity=logging.ERROR)
+        return None
+
+    return cls
+
