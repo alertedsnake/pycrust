@@ -1,4 +1,11 @@
 """
+
+This code is based on the python-oauth project by Leah Culver.  Any changes
+made herein are Copyright (c) 2014 Michael Stella.
+
+Original license is as follows:
+
+
 The MIT License
 
 Copyright (c) 2007 Leah Culver

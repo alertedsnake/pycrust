@@ -1,7 +1,7 @@
 """
 OAuth1 tool.
 
-NOTE: Currently this works in Python 3.x only, feel free to backport it.
+NOTE: Currently this has only been tested thoroughly in Python 3.
 
 Configuration:
 
@@ -17,7 +17,8 @@ You really should override tools.oauth.datastore.class if you want
 this to work :)
 
 This work was based loosely on the oauthtool.py in the python-gearshift
-project: https://code.google.com/p/python-gearshift/
+project: https://code.google.com/p/python-gearshift/ which is licensed
+under the MIT license, please see LICENSE.gearshift for details.
 
 """
 
@@ -55,11 +56,6 @@ class OAuthTool(cherrypy.Tool):
         cherrypy.log("OAuthTool initialized", context='ENGINE', severity=logging.INFO)
 
         super().__init__(point='before_handler', callable=self.before_handler, priority=10)
-
-
-    def _setup(self):
-        super()._setup()
-        cherrypy.request.hooks.attach(point='before_finalize', callback=self.before_finalize)
 
 
     def send_oauth_error(self, msg, code=401):
@@ -141,10 +137,4 @@ class OAuthTool(cherrypy.Tool):
             cherrypy.response.body = [tokstr]
             cherrypy.request.handler = None
             cherrypy.response.headers.pop("Content-Length", None)
-
-
-    def before_finalize(self, **kwargs):
-        # Even if we have an oauth_request, that doesn't mean it's valid
-        oauth_request = getattr(cherrypy.request, 'oauth_request', None)
-
 
