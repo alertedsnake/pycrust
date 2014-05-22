@@ -430,6 +430,11 @@ class OAuthServer():
         token = self._get_token(oauth_request, 'request')
         self._check_signature(oauth_request, consumer, token)
         new_token = self.data_store.fetch_access_token(consumer, token, verifier)
+
+        # the datastore should return None if the token
+        # does not exist, or is expired
+        if not new_token:
+            raise OAuthError("token not found")
         return new_token
 
     def verify_request(self, oauth_request):

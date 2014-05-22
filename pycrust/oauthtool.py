@@ -45,7 +45,7 @@ class OAuthTool(cherrypy.Tool):
         if not callable(ds_class):
             raise TypeError("datastore class '{}' is not callable".format(ds_classname))
         self.datastore = ds_class(app=app)
-        cherrypy.log(" Loaded auth datastore class {}".format(ds_classname),
+        cherrypy.log("OAuthTool loaded auth datastore class {}".format(ds_classname),
                         context='ENGINE', severity=logging.INFO)
 
         self.oauth_server = oauth.OAuthServer(self.datastore)
@@ -67,7 +67,7 @@ class OAuthTool(cherrypy.Tool):
         for k, v in header.items():
             cherrypy.response.headers[k] = v
 
-        cherrypy.log(msg, context='ENGINE', severity=logging.INFO)
+        cherrypy.log("OAuthTool " + msg, context='ENGINE', severity=logging.INFO)
         raise cherrypy.HTTPError(code)
 
 
@@ -117,7 +117,7 @@ class OAuthTool(cherrypy.Tool):
                 # create a request token
                 token = self.oauth_server.fetch_request_token(oauth_request)
             except oauth.OAuthError as e:
-                return self.send_oauth_error("auth request error: {}".format(e.message))
+                return self.send_oauth_error("request error: {}".format(e.message))
 
             # Tell CherryPy that we have processed the request
             tokstr = token.to_string()
@@ -134,7 +134,7 @@ class OAuthTool(cherrypy.Tool):
             try:
                 token = self.oauth_server.fetch_access_token(oauth_request)
             except oauth.OAuthError as e:
-                return self.send_oauth_error("auth token error: {}".format(e.message))
+                return self.send_oauth_error("auth error: {}".format(e.message))
 
             tokstr = token.to_string()
             if not isinstance(tokstr, bytes):
