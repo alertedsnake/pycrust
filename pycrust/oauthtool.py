@@ -72,7 +72,6 @@ class OAuthTool(cherrypy.Tool):
 
 
     def before_handler(self, **kwargs):
-        from_request = oauth.OAuthRequest.from_request
         headers = cherrypy.request.headers.copy()
 
         params = urllib.parse.parse_qs(cherrypy.request.query_string)
@@ -87,7 +86,7 @@ class OAuthTool(cherrypy.Tool):
                     cherrypy.request.script_name,
                     cherrypy.request.path_info)
 
-        oauth_request = from_request(
+        oauth_request = oauth.OAuthRequest.from_request(
                 http_method=cherrypy.request.method,
                 http_url=url,
                 headers=headers,
