@@ -130,7 +130,7 @@ def dump_response(*args, **kwargs):
                 f.write(str(cherrypy.response.collapse_body()))
 
 
-cherrypy.tools.debug_request  = cherrypy.Tool('on_end_resource', dump_request)
+cherrypy.tools.debug_request  = cherrypy.Tool('before_handler', dump_request, priority=1)
 cherrypy.tools.debug_response = cherrypy.Tool('on_end_resource', dump_response)
 
 
