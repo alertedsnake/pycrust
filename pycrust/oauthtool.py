@@ -207,16 +207,23 @@ class OAuth2Tool(cherrypy.Tool):
                     query_string=cherrypy.request.query_string,
                 )
 
-
             try:
                 token = self.oauth_server.fetch_request_token(oauth_request)
             except oauth.OAuthError as e:
                 return self.send_oauth_error("request error: {}".format(e.message))
 
+            # client might be redirected to a local auth server
+            if 'redirect_uri' in params:
+                target_url = params['redirect_uri']
+            else:
+                target_url = self.token_url
+
             # generate a 302 response
-            rsp = self.token_url + '?code={}'.format(token.key)
+            rsp = target_url + '?code={}'.format(token.key)
             if 'state' in params:
-                rsp += '&state={}'.format(params['state'][0])
+                rsp += '&state={}'.format(params['state'])
+            if 'scope' in params:
+                rsp += '&scope={}'.format(params['scope'])
 
             raise cherrypy.HTTPRedirect(rsp, 302)
 
@@ -232,8 +239,8 @@ class OAuth2Tool(cherrypy.Tool):
                 )
 
             grant_type = oauth_request.get_parameter('grant_type')
-            print("grant_type: " + grant_type)
 
+            token = None
             if grant_type == 'authorization_code':
 
                 try:
@@ -241,16 +248,21 @@ class OAuth2Tool(cherrypy.Tool):
                 except oauth.OAuthError as e:
                     return self.send_oauth_error("auth error: {}".format(e.message))
 
-                tokstr = token.to_string2()
-                if not isinstance(tokstr, bytes):
-                    tokstr = tokstr.encode('utf-8')
-                cherrypy.response.body = [tokstr]
-
             elif grant_type == 'client_credentials':
+                # TODO: handle this case
                 pass
             else:
                 return self.send_oauth_error("bad value for grant_type")
 
+            # return this as JSON rather than an encoded query string,
+            # so we can easily parse it with Google's java oauth library.
+            tokstr = token.to_json2()
+            if not isinstance(tokstr, bytes):
+                tokstr = tokstr.encode('utf-8')
+            cherrypy.response.body = [tokstr]
+
             # Tell CherryPy that we have processed the request
             cherrypy.request.handler = None
             cherrypy.response.headers.pop("Content-Length", None)
+
+

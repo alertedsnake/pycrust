@@ -32,6 +32,7 @@ THE SOFTWARE.
 import base64
 import hashlib
 import hmac
+import json
 import random
 import six
 import time
@@ -160,6 +161,13 @@ class OAuthToken():
             data['oauth_callback_confirmed'] = self.callback_confirmed
         return urllib.parse.urlencode(data)
 
+    def to_json2(self, expires_in=None):
+        data = { 'access_token': self.key }
+        if expires_in:
+            data['expires_in'] = expires_in
+        if self.callback_confirmed is not None:
+            data['oauth_callback_confirmed'] = self.callback_confirmed
+        return json.dumps(data)
 
     @staticmethod
     def from_string(s):
