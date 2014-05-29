@@ -104,7 +104,8 @@ def json_handler(*args, **kwargs):
     """Custom JSON handler which uses the custom encoder"""
     value = cherrypy.serving.request._json_inner_handler(*args, **kwargs)
 
-    out = json.dumps(value, sort_keys=True, indent=4, cls=JSONCustomEncoder, allow_nan=False)
+    # optionally set indent=4 here
+    out = json.dumps(value, sort_keys=True, cls=JSONCustomEncoder, allow_nan=False)
 
     # Cherrypy wants us to return bytes, so in Python 3 we have to
     # encode the JSON output properly
