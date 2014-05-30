@@ -165,8 +165,6 @@ class OAuthToken():
         data = { 'access_token': self.key }
         if expires_in:
             data['expires_in'] = expires_in
-        if self.callback_confirmed is not None:
-            data['oauth_callback_confirmed'] = self.callback_confirmed
         return json.dumps(data)
 
     @staticmethod
@@ -311,26 +309,32 @@ class OAuthRequestBase():
                 auth_header = auth_header[6:]
                 try:
                     # Get the parameters from the header.
-                    #header_params = OAuthRequest.split_header(auth_header)
                     header_params = cls.split_header(auth_header)
                     parameters.update(header_params)
                 except:
                     raise OAuthError('Unable to parse OAuth parameters from Authorization header.')
 
+            # handle Basic auth, for grant_type=client_credentials
+            elif auth_header[:6] == 'Basic ':
+                auth_header = auth_header[6:] + '=='
+                try:
+                    key,secret = base64.b64decode(auth_header.encode('utf-8')).decode().split(':')
+                    parameters.update({'client_id': key, 'client_secret': secret})
+                except:
+                    raise OAuthError('Unable to parse OAuth parameters from Authorization header.')
+
+
         # GET or POST query string.
         if query_string:
-            #query_params = OAuthRequest.split_url_string(query_string)
             query_params = cls.split_url_string(query_string)
             parameters.update(query_params)
 
         # URL parameters.
         param_str = urllib.parse.urlparse(http_url)[4] # query
-        #url_params = OAuthRequest.split_url_string(param_str)
         url_params = cls.split_url_string(param_str)
         parameters.update(url_params)
 
         if parameters:
-            #return OAuthRequest(http_method, http_url, parameters)
             return cls(http_method, http_url, parameters)
 
         return None
@@ -363,7 +367,6 @@ class OAuthRequestBase():
             # 1.0a support for callback in the request token request.
             parameters['oauth_callback'] = callback
 
-        #return OAuthRequest(http_method, http_url, parameters)
         return cls(http_method, http_url, parameters)
 
     @classmethod
@@ -377,7 +380,6 @@ class OAuthRequestBase():
         if callback:
             parameters['oauth_callback'] = callback
 
-        #return OAuthRequest(http_method, http_url, parameters)
         return cls(http_method, http_url, parameters)
 
     @staticmethod
@@ -628,7 +630,6 @@ class OAuth2Server(OAuthServer):
 
         # Get the request token.
         token = self._get_token(oauth_request, 'request')
-#        self._check_signature(oauth_request, consumer, token)
         new_token = self.data_store.fetch_access_token(consumer, token)
 
         # the datastore should return None if the token
@@ -636,6 +637,26 @@ class OAuth2Server(OAuthServer):
         if not new_token:
             raise OAuthError("token not found")
         return new_token
+
+
+    def authenticate_client_credentials(self, oauth_request):
+        """Processes an access_token request and returns the
+        access token on success.
+        """
+        version = self._get_version(oauth_request)
+        consumer = self._get_consumer(oauth_request)
+
+        # Get the request token.
+        rt = self.data_store.fetch_request_token(consumer)
+        # convert to auth token
+        new_token = self.data_store.fetch_access_token(consumer, rt)
+
+        # the datastore should return None if the token
+        # does not exist, or is expired
+        if not new_token:
+            raise OAuthError("token not found")
+        return new_token
+
 
 class OAuthClient():
     """OAuthClient is a worker to attempt to execute a request."""

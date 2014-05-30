@@ -242,15 +242,17 @@ class OAuth2Tool(cherrypy.Tool):
 
             token = None
             if grant_type == 'authorization_code':
-
                 try:
                     token = self.oauth_server.fetch_access_token(oauth_request)
                 except oauth.OAuthError as e:
-                    return self.send_oauth_error("auth error: {}".format(e.message))
+                    return self.send_oauth_error("authorization_code auth error: {}".format(e.message))
 
             elif grant_type == 'client_credentials':
-                # TODO: handle this case
-                pass
+                try:
+                    token = self.oauth_server.authenticate_client_credentials(oauth_request)
+                except oauth.OAuthError as e:
+                    return self.send_oauth_error("client_credentials auth error: {}".format(e.message))
+
             else:
                 return self.send_oauth_error("bad value for grant_type")
 
