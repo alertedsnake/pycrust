@@ -10,7 +10,7 @@ http://tools.cherrypy.org/wiki/AuthenticationAndAccessRestrictions
 __author__ = 'Michael Stella <pycrust@thismetalsky.org>'
 
 import cherrypy
-import urllib
+from six.moves import urllib
 
 from pycrust import url
 
@@ -39,7 +39,7 @@ def check_auth(*args, **kwargs):
             target = url('login')
             referer = cherrypy.request.request_line.split()[1]
             if referer:
-                target = "%s?ret=%s" % (target,  urllib.quote(referer))
+                target = "%s?ret=%s" % (target,  urllib.parse.quote(referer))
             raise cherrypy.HTTPRedirect(target)
 
 cherrypy.tools.auth = cherrypy.Tool('before_handler', check_auth)
