@@ -62,6 +62,7 @@ def url(*args, **kwargs):
     import routes
 
     if 'absolute' in kwargs and kwargs['absolute']:
+        del(kwargs['absolute'])
         return cherrypy.url(routes.url_for(*args, **kwargs))
 
     return routes.url_for(*args, **kwargs)
