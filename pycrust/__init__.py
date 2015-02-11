@@ -18,6 +18,7 @@ __version__ = '1.0.0'
 
 import inspect, logging, os, sys
 import cherrypy
+import codecs
 
 class BaseHandler(object):
     """A Base class for web handler objects."""
@@ -75,7 +76,7 @@ def dump_request(*args, **kwargs):
         tools.debug_request.on  = True
     """
 
-    with open('/tmp/request.%s.txt' % cherrypy.request.method, 'w', encoding='utf-8') as f:
+    with codecs.open('/tmp/request.%s.txt' % cherrypy.request.method, 'w', encoding='utf-8') as f:
 
         f.write(cherrypy.request.request_line)
         f.write("\n")
@@ -117,7 +118,7 @@ def dump_response(*args, **kwargs):
     elif isinstance(cherrypy.response.status, str):
         status = int(cherrypy.response.status.split(' ', 1)[0])
 
-    with open('/tmp/response.%d.txt' % status, 'w', encoding='utf-8') as f:
+    with codecs.open('/tmp/response.%d.txt' % status, 'w', encoding='utf-8') as f:
 
         f.write("HTTP/1.1 %s\n" % cherrypy.response.status)
         for (k,v) in cherrypy.response.headers.items():
