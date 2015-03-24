@@ -1,17 +1,17 @@
 #!/usr/bin/env python
 try:
-    from setuptools import setup
+    from setuptools import setup, find_packages
 except:
-    from distutils.core import setup
+    from distutils.core import setup, find_packages
 
 setup(
     name            = "pycrust",
-    version         = "1.1",
+    version         = "1.2",
     description     = "A collection of add-ons for CherryPy",
     author          = "Michael Stella",
     author_email    = "pycrust@thismetalsky.org",
     license         = "BSD",
-    packages        = ['pycrust'],
+    packages        = find_packages(),
     requires        = ['six'],
     install_requires= ['six'],
     classifiers=[
